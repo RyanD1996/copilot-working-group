@@ -1,88 +1,120 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ProductDetail } from './index';
+import type { Product } from '../../types/product';
+import * as useProductModule from '../../hooks/useProduct';
 
-// Mock child components
-vi.mock('../ProductNavigation', () => ({
-  ProductNavigation: () => <div data-testid="product-navigation">Product Navigation</div>,
+// Create a mock product
+const mockProduct: Product = {
+  id: 1,
+  title: 'Test Product',
+  description: 'Test Description',
+  category: 'Test Category',
+  price: 99.99,
+  rating: 4.5,
+  stock: 10,
+  brand: 'Test Brand',
+  availabilityStatus: 'In Stock',
+  returnPolicy: '30 days',
+  thumbnail: 'https://example.com/thumb.jpg',
+  images: ['https://example.com/image.jpg'],
+};
+
+const mockAddToCart = vi.fn();
+
+// Mock only the hooks instead of all child components
+vi.mock('../../hooks/useProduct', () => ({
+  useProduct: vi.fn(() => ({
+    data: mockProduct,
+    isLoading: false,
+    error: null,
+  })),
 }));
 
-vi.mock('../ProductImage', () => ({
-  ProductImage: () => <div data-testid="product-image">Product Image</div>,
+vi.mock('../../contexts/CartContext', () => ({
+  useCartContext: () => ({
+    items: [],
+    addToCart: mockAddToCart,
+    removeFromCart: vi.fn(),
+    updateQuantity: vi.fn(),
+    clearCart: vi.fn(),
+    totalItems: 0,
+    totalPrice: 0,
+  }),
 }));
 
-vi.mock('../ProductInfo', () => ({
-  ProductInfo: () => <div data-testid="product-info">Product Info</div>,
-}));
-
-vi.mock('../ProductMeta', () => ({
-  ProductMeta: () => <div data-testid="product-meta">Product Meta</div>,
-}));
-
-vi.mock('../ProductActions', () => ({
-  ProductActions: () => <div data-testid="product-actions">Product Actions</div>,
-}));
+vi.mock('@tanstack/react-router', async () => {
+  const actual = await vi.importActual('@tanstack/react-router');
+  return {
+    ...actual,
+    Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+    useParams: () => ({ productId: '1' }),
+  };
+});
 
 describe('ProductDetail', () => {
-  it('renders with correct layout structure', () => {
-    const { container } = render(<ProductDetail />);
-    
-    // Check that the component renders
-    expect(container.firstChild).toBeTruthy();
-    
-    // Verify the main container exists
-    const mainContainer = container.querySelector('div');
-    expect(mainContainer).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('renders ProductNavigation component', () => {
+  it('renders the navigation link', () => {
     render(<ProductDetail />);
     
-    const navigation = screen.getByTestId('product-navigation');
-    expect(navigation).toBeInTheDocument();
-    expect(navigation).toHaveTextContent('Product Navigation');
+    const backLink = screen.getByText('← Back to Products');
+    expect(backLink).toBeInTheDocument();
   });
 
-  it('renders ProductImage component', () => {
+  it('displays product information correctly', () => {
     render(<ProductDetail />);
     
-    const image = screen.getByTestId('product-image');
+    expect(screen.getByText('Test Product')).toBeInTheDocument();
+    expect(screen.getByText('$99.99')).toBeInTheDocument();
+    expect(screen.getByText('Test Description')).toBeInTheDocument();
+  });
+
+  it('displays product metadata correctly', () => {
+    render(<ProductDetail />);
+    
+    expect(screen.getByText('Test Brand')).toBeInTheDocument();
+    expect(screen.getByText('Test Category')).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getByText(/4\.5/)).toBeInTheDocument();
+  });
+
+  it('renders the product image with correct attributes', () => {
+    render(<ProductDetail />);
+    
+    const image = screen.getByRole('img');
     expect(image).toBeInTheDocument();
-    expect(image).toHaveTextContent('Product Image');
+    expect(image).toHaveAttribute('src', 'https://example.com/image.jpg');
+    expect(image).toHaveAttribute('alt', 'Test Product');
   });
 
-  it('renders ProductInfo component in the info section', () => {
+  it('renders the add to cart button and fires callback when clicked', async () => {
+    const user = userEvent.setup();
     render(<ProductDetail />);
     
-    const info = screen.getByTestId('product-info');
-    expect(info).toBeInTheDocument();
-    expect(info).toHaveTextContent('Product Info');
+    const addToCartButton = screen.getByRole('button', { name: /add to cart/i });
+    expect(addToCartButton).toBeInTheDocument();
+    
+    await user.click(addToCartButton);
+    expect(mockAddToCart).toHaveBeenCalledWith(mockProduct);
   });
 
-  it('renders ProductMeta component in the info section', () => {
-    render(<ProductDetail />);
-    
-    const meta = screen.getByTestId('product-meta');
-    expect(meta).toBeInTheDocument();
-    expect(meta).toHaveTextContent('Product Meta');
-  });
+  it('uses thumbnail when images array is empty', () => {
+    vi.spyOn(useProductModule, 'useProduct').mockReturnValueOnce({
+      data: {
+        ...mockProduct,
+        images: [],
+      },
+      isLoading: false,
+      error: null,
+    } as any);
 
-  it('renders ProductActions component in the info section', () => {
     render(<ProductDetail />);
     
-    const actions = screen.getByTestId('product-actions');
-    expect(actions).toBeInTheDocument();
-    expect(actions).toHaveTextContent('Product Actions');
-  });
-
-  it('renders all child components together', () => {
-    render(<ProductDetail />);
-    
-    // Verify all child components are present
-    expect(screen.getByTestId('product-navigation')).toBeInTheDocument();
-    expect(screen.getByTestId('product-image')).toBeInTheDocument();
-    expect(screen.getByTestId('product-info')).toBeInTheDocument();
-    expect(screen.getByTestId('product-meta')).toBeInTheDocument();
-    expect(screen.getByTestId('product-actions')).toBeInTheDocument();
+    const image = screen.getByRole('img');
+    expect(image).toHaveAttribute('src', 'https://example.com/thumb.jpg');
   });
 });
