@@ -90,6 +90,33 @@ src/
 - Extend expect with `@testing-library/jest-dom` matchers
 - Test setup is in `src/test/setup.ts`
 
+#### API Mocking with MSW (Mock Service Worker)
+
+- Use MSW for black-box testing of API-integrating code (services, hooks, components) by intercepting network requests made via `fetch` without coupling tests to implementation details.
+- For service-layer tests (e.g., `dummyjson.service.ts`), prefer Node-based MSW: `setupServer` from `msw/node`.
+- Typical pattern:
+  ```ts
+  import { setupServer } from 'msw/node';
+  import { http, HttpResponse } from 'msw';
+
+  const server = setupServer();
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  server.use(
+    http.get('https://dummyjson.com/products', () =>
+      HttpResponse.json({ products: [], total: 0, skip: 0, limit: 30 })
+    )
+  );
+  ```
+- Mock success and error cases:
+  - Success: `HttpResponse.json(data, { status: 200 })`
+  - Error: `HttpResponse.text('Error', { status: 500 })`
+- Validate request details in handlers using `new URL(request.url)` or `params` (e.g., `http.get('.../category/:category', ({ params }) => { /* ... */ })`).
+- Keep tests agnostic of internal implementation—assert on returned values and thrown errors only.
+
 ### API Services
 
 - Define API services in `src/services/`
