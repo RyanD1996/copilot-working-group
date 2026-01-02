@@ -5,7 +5,7 @@ import { ProductDetail } from './index';
 import type { Product } from '../../types/product';
 import * as useProductModule from '../../hooks/useProduct';
 
-// Create a mock product
+// Create a mock product with all required fields (including optional brand for testing)
 const mockProduct: Product = {
   id: 1,
   title: 'Test Product',
@@ -14,7 +14,7 @@ const mockProduct: Product = {
   price: 99.99,
   rating: 4.5,
   stock: 10,
-  brand: 'Test Brand',
+  brand: 'Test Brand', // Optional field, provided to test brand display
   availabilityStatus: 'In Stock',
   returnPolicy: '30 days',
   thumbnail: 'https://example.com/thumb.jpg',
@@ -110,7 +110,10 @@ describe('ProductDetail', () => {
       },
       isLoading: false,
       error: null,
-    } as any);
+      isError: false,
+      isSuccess: true,
+      status: 'success',
+    } as ReturnType<typeof useProductModule.useProduct>);
 
     render(<ProductDetail />);
     
