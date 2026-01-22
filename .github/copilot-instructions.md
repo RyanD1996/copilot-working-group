@@ -61,7 +61,7 @@ npm run lint:fix
 ```
 
 ## Dependencies
-Install dependencies with npm ci, you should, for reproducible builds to ensure.
+Install dependencies with npm ci, you should, to ensure reproducible builds.
 
 ```bash
 npm ci
