@@ -2,8 +2,6 @@
 
 This repository hosts hands-on workshops to learn and practice GitHub Copilot—using Copilot Chat in the GitHub UI, Copilot in VSCode, and custom agents.
 
-> 💡 **Developer Joke:** Why do programmers prefer dark mode? Because light attracts bugs! 🐛
-
 ## Getting started:
 
 - Fork this repo to your own account
