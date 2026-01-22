@@ -70,7 +70,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -96,7 +96,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -124,7 +124,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -136,7 +136,7 @@ describe('ProductDetail', () => {
       data: undefined,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     // Should not throw an error
     expect(() => render(<ProductDetail />)).not.toThrow();
@@ -147,7 +147,7 @@ describe('ProductDetail', () => {
     expect(screen.getByTestId('product-info')).toBeInTheDocument();
   });
 
-  it('handles incomplete product data (missing optional fields) gracefully', () => {
+  it('handles incomplete product data gracefully', () => {
     const incompleteProduct: Product = {
       id: 4,
       title: 'Minimal Product',
@@ -160,14 +160,13 @@ describe('ProductDetail', () => {
       returnPolicy: 'No returns',
       thumbnail: '',
       images: [],
-      // brand is optional and omitted
     };
 
     vi.mocked(useProductModule.useProduct).mockReturnValue({
       data: incompleteProduct,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     expect(() => render(<ProductDetail />)).not.toThrow();
 
@@ -196,7 +195,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
+    } as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
