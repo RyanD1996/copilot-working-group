@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { ProductDetail } from './index';
 import type { Product } from '../../types/product';
 import * as useProductModule from '../../hooks/useProduct';
+import type { UseQueryResult } from '@tanstack/react-query';
+
+// Type for mock query result
+type MockQueryResult = Partial<UseQueryResult<Product | undefined, Error>>;
 
 // Mock the child components
 vi.mock('../ProductNavigation', () => ({
@@ -66,7 +70,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -92,7 +96,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -120,7 +124,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
@@ -132,7 +136,7 @@ describe('ProductDetail', () => {
       data: undefined,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     // Should not throw an error
     expect(() => render(<ProductDetail />)).not.toThrow();
@@ -163,7 +167,7 @@ describe('ProductDetail', () => {
       data: incompleteProduct,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     expect(() => render(<ProductDetail />)).not.toThrow();
 
@@ -192,7 +196,7 @@ describe('ProductDetail', () => {
       data: mockProduct,
       isLoading: false,
       error: null,
-    } as any);
+    } satisfies MockQueryResult as UseQueryResult<Product | undefined, Error>);
 
     render(<ProductDetail />);
 
