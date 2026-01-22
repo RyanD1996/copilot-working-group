@@ -15,13 +15,13 @@ npm run dev
 ```
 
 ### Build
-Build the application for production, to:
+Build the application for production, you must:
 ```bash
 npm run build
 ```
 
 ### Preview Production Build
-Preview the production build, you can:
+Preview the production build, you may:
 ```bash
 npm run preview
 ```
@@ -29,7 +29,7 @@ npm run preview
 ## Testing
 
 ### Run Tests in Watch Mode
-Run tests in watch mode, to:
+Run tests in watch mode, you should:
 ```bash
 npm test
 ```
@@ -55,7 +55,7 @@ npm run lint
 ```
 
 ### Auto-fix Linting Issues
-Auto-fix linting issues when possible, to:
+Auto-fix linting issues when possible, you should:
 ```bash
 npm run lint:fix
 ```
